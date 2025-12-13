@@ -16,12 +16,14 @@ class ConverterScreen extends StatefulWidget {
 }
 
 class _ConverterScreenState extends State<ConverterScreen> {
-  final TextEditingController _classNameController = TextEditingController(text: 'MyClass');
+  final TextEditingController _classNameController = TextEditingController(
+    text: 'MyClass',
+  );
   final TextEditingController _jsonController = TextEditingController();
-  
+
   GenerationOptions _options = const GenerationOptions();
   String _generatedCode = '';
-  
+
   final JsonParser _parser = JsonParser();
   final DartGenerator _generator = DartGenerator();
 
@@ -61,7 +63,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
 
     // Generate code
     final code = _generator.generateCode(parseResult, _options);
-    
+
     setState(() {
       _generatedCode = code;
     });
@@ -71,7 +73,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
     if (_generatedCode.isEmpty) return;
 
     Clipboard.setData(ClipboardData(text: _generatedCode));
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Code copied to clipboard'),
@@ -139,7 +141,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
               ],
             ),
           ),
-          
+
           // Right panel - Output
           Expanded(
             flex: 3,
