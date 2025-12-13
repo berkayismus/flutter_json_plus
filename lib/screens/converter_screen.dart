@@ -94,27 +94,87 @@ class _ConverterScreenState extends State<ConverterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isWideScreen = MediaQuery.of(context).size.width >= 800;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('JSON to Dart Class Converter'),
         centerTitle: true,
       ),
-      body: Row(
-        children: [
-          // Left panel - Input and Options
-          Expanded(
-            flex: 2,
+      body: isWideScreen ? _buildWideLayout() : _buildNarrowLayout(),
+    );
+  }
+
+  Widget _buildWideLayout() {
+    return Row(
+      children: [
+        // Left panel - Input and Options
+        Expanded(
+          flex: 2,
+          child: Column(
+            children: [
+              Expanded(
+                flex: 3,
+                child: JsonInputPanel(
+                  classNameController: _classNameController,
+                  jsonController: _jsonController,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: OptionsPanel(
+                  options: _options,
+                  onOptionsChanged: (newOptions) {
+                    setState(() {
+                      _options = newOptions;
+                    });
+                  },
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: _generateCode,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text('Generate', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Right panel - Output
+        Expanded(
+          flex: 3,
+          child: OutputPanel(
+            generatedCode: _generatedCode,
+            onCopy: _copyToClipboard,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNarrowLayout() {
+    return Column(
+      children: [
+        // Top section - Input and Options
+        Expanded(
+          child: SingleChildScrollView(
             child: Column(
               children: [
-                Expanded(
-                  flex: 3,
+                SizedBox(
+                  height: 300,
                   child: JsonInputPanel(
                     classNameController: _classNameController,
                     jsonController: _jsonController,
                   ),
                 ),
-                Expanded(
-                  flex: 2,
+                SizedBox(
+                  height: 400,
                   child: OptionsPanel(
                     options: _options,
                     onOptionsChanged: (newOptions) {
@@ -126,11 +186,11 @@ class _ConverterScreenState extends State<ConverterScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(16.0),
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _generateCode,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      minimumSize: const Size(double.infinity, 50),
                     ),
                     child: const Text(
                       'Generate',
@@ -141,17 +201,16 @@ class _ConverterScreenState extends State<ConverterScreen> {
               ],
             ),
           ),
+        ),
 
-          // Right panel - Output
-          Expanded(
-            flex: 3,
-            child: OutputPanel(
-              generatedCode: _generatedCode,
-              onCopy: _copyToClipboard,
-            ),
+        // Bottom section - Output
+        Expanded(
+          child: OutputPanel(
+            generatedCode: _generatedCode,
+            onCopy: _copyToClipboard,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
